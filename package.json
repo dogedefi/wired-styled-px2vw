@@ -1,5 +1,5 @@
 {
-    "name": "styled-px2vw",
+    "name": "wired-styled-px2vw",
     "version": "2.0.0",
     "description": "Extension of styled-components with features for convert px to vw units",
     "main": "lib/index.js",
@@ -38,6 +38,7 @@
     ],
     "dependencies": {
         "@types/styled-components": "^5.1.1",
+        "lodash.throttle": "^4.1.1",
         "styled-components": "^5.1.1"
     },
     "devDependencies": {

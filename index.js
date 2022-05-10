@@ -1,9 +1,29 @@
 import styled from 'styled-components';
+import throttle from 'lodash.throttle';
 
 const pxRe = /-?\d*[.\d]*px/g;
 const base64Re = /^data:\w+\/[a-zA-Z+\-.]+;base64,/i;
 
-const px2vw = px => Number(px) ? `${Math.round(Number(px) / 7.5 * 100000) / 100000}vw` : 0;
+let isMobile = false;
+const MOBILE_WIDTH = 768;
+ const getWindowScreen = throttle(() => {
+     isMobile =
+         window.innerWidth <= MOBILE_WIDTH ||
+         /mobile|ios|android/gi.test(navigator.userAgent);
+
+     // chrome
+     if (
+         /chrome/gi.test(navigator.userAgent) &&
+         window.innerWidth > MOBILE_WIDTH
+     ) {
+         isMobile = false;
+     } else {
+         isMobile = true;
+     }
+ }, 100);
+window.addEventListener("resize", getWindowScreen, false);
+
+const px2vw = px => Number(px) ? `${Math.round(Number(px) / (isMobile ? 7.5 : 14.4) * 100000) / 100000}vw` : 0;
 
 const convertStringPx2vw = style => {
     if (!style) return style;
