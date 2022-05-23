@@ -8,18 +8,29 @@ const base64Re = /^data:\w+\/[a-zA-Z+\-.]+;base64,/i;
 let isMobile = false;
 const MOBILE_WIDTH = process.env.MOBILE_WIDTH ?? 768;
 const checkScreen = () => {
-    isMobile =
+    let state =
         window.innerWidth <= MOBILE_WIDTH ||
         /mobile|ios|android/gi.test(navigator.userAgent);
 
-    // chrome
     if (
         /chrome/gi.test(navigator.userAgent) &&
         window.innerWidth > MOBILE_WIDTH
     ) {
-        isMobile = false;
+        // chrome
+        state = false;
     } else {
-        isMobile = true;
+        state = true;
+    }
+
+    if (state != isMobile) {
+        const displayMode = window.localStorage.getItem("displayMode");
+        const latestMode = state ? "mobile" : "desktop";
+        if (displayMode !== latestMode) {
+            window.localStorage.setItem("displayMode", latestMode);
+            window.location.reload();
+        } else {
+            isMobile = state;
+        }
     }
 };
 const getWindowScreen = throttle(checkScreen, 100);
