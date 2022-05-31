@@ -6,15 +6,15 @@ const pxRe = /-?\d*[.\d]*px/g;
 const base64Re = /^data:\w+\/[a-zA-Z+\-.]+;base64,/i;
 
 let isMobile = false;
-const MOBILE_WIDTH = process.env.MOBILE_WIDTH ?? 768;
+const MOBILE_BOUNDARY = process.env.MOBILE_BOUNDARY ?? 768;
 const checkScreen = () => {
     let state =
-        window.innerWidth <= MOBILE_WIDTH ||
+        window.innerWidth <= MOBILE_BOUNDARY ||
         /mobile|ios|android/gi.test(navigator.userAgent);
 
     if (
         /chrome/gi.test(navigator.userAgent) &&
-        window.innerWidth > MOBILE_WIDTH
+        window.innerWidth > MOBILE_BOUNDARY
     ) {
         // chrome
         state = false;
