@@ -4,34 +4,32 @@ import styled from "styled-components";
 const pxRe = /-?\d*[.\d]*px/g;
 const base64Re = /^data:\w+\/[a-zA-Z+\-.]+;base64,/i;
 
-const MOBILE_BOUNDARY = process.env.MOBILE_BOUNDARY
-    ? Number(process.env.MOBILE_BOUNDARY)
-    : 768;
+const DRAFT_WIDTH = process.env.MOBILE_DESIGN_DRAFT_WIDTH
+    ? Number(process.env.MOBILE_DESIGN_DRAFT_WIDTH)
+    : 750;
 
-function checkIfMobile() {
+function checkIfMobile(boundary = 800) {
     const isMobile =
-        window.innerWidth <= MOBILE_BOUNDARY ||
+        window.innerWidth <= boundary ||
         /mobile|ios|android/gi.test(navigator.userAgent);
 
     // chrome
-    if (
-        /chrome/gi.test(navigator.userAgent) &&
-        window.innerWidth > MOBILE_BOUNDARY
-    ) {
+    if (/chrome/gi.test(navigator.userAgent) && window.innerWidth > boundary) {
         return false;
     }
     return isMobile;
 }
 
-const px2vw = (px) =>
-    Number(px)
+const px2vw = (px) => {
+    return Number(px)
         ? checkIfMobile()
             ? `${
-                  Math.round((Number(px) / (MOBILE_BOUNDARY / 100)) * 100000) /
+                  Math.round((Number(px) / (DRAFT_WIDTH / 100)) * 100000) /
                   100000
               }vw`
             : `${px}px`
         : 0;
+};
 
 const convertStringPx2vw = (style) => {
     if (!style) return style;
