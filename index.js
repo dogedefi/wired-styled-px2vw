@@ -7,10 +7,10 @@ const base64Re = /^data:\w+\/[a-zA-Z+\-.]+;base64,/i
 const DRAFT_WIDTH = process.env.MOBILE_DESIGN_DRAFT_WIDTH ? Number(process.env.MOBILE_DESIGN_DRAFT_WIDTH) : 750
 
 function checkIfMobile(boundary = 800) {
-    const isMobile = window.screen.width <= boundary || /mobile|ios|android/gi.test(navigator.userAgent)
+    const isMobile = window.innerWidth <= boundary || /mobile|ios|android/gi.test(navigator.userAgent)
 
     // chrome
-    if (/chrome/gi.test(navigator.userAgent) && window.screen.width > boundary) {
+    if (/chrome/gi.test(navigator.userAgent) && window.innerWidth > boundary) {
         return false
     }
     return isMobile
