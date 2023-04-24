@@ -4,7 +4,8 @@ import styled from 'styled-components'
 const pxRe = /-?\d*[.\d]*px/g
 const base64Re = /^data:\w+\/[a-zA-Z+\-.]+;base64,/i
 
-const DRAFT_WIDTH = process.env.MOBILE_DESIGN_DRAFT_WIDTH ? Number(process.env.MOBILE_DESIGN_DRAFT_WIDTH) : 750
+const DESIGN_DRAFT_WIDTH = process.env.DESIGN_DRAFT_WIDTH ? Number(process.env.DESIGN_DRAFT_WIDTH) : 750
+const MEDIA_SPLITTING_PX = process.env.MEDIA_SPLITTING_PX ? Number(process.env.MEDIA_SPLITTING_PX) : 800
 
 function checkIfMobile(boundary = 800) {
     const isMobile = window.innerWidth <= boundary || /mobile|ios|android/gi.test(navigator.userAgent)
@@ -19,7 +20,7 @@ function checkIfMobile(boundary = 800) {
 const px2vw = px => {
     return Number(px)
         ? checkIfMobile()
-            ? `${Math.round((Number(px) / (DRAFT_WIDTH / 100)) * 100000) / 100000}vw`
+            ? `${Math.round((Number(px) / (DESIGN_DRAFT_WIDTH / 100)) * 100000) / 100000}vw`
             : `${px}px`
         : 0
 }
@@ -49,6 +50,12 @@ const convertKeyframesPx2vw = keyframes => {
 
 const convertInterpolationPx2vw = interpolation => {
     if (typeof interpolation === 'string') {
+        if (/@mobile/g.test(interpolation)) {
+            return interpolation.replace(/@mobile/g, `@media (max-width: ${MEDIA_SPLITTING_PX}px)`)
+        }
+        if (/@desktop/g.test(interpolation)) {
+            return interpolation.replace(/@desktop/g, `@media (min-width: ${MEDIA_SPLITTING_PX + 1}px)`)
+        }
         return convertStringPx2vw(interpolation)
     }
 
