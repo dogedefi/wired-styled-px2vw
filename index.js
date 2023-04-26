@@ -7,7 +7,7 @@ const base64Re = /^data:\w+\/[a-zA-Z+\-.]+;base64,/i
 const DESIGN_DRAFT_WIDTH = process.env.DESIGN_DRAFT_WIDTH ? Number(process.env.DESIGN_DRAFT_WIDTH) : 750
 const MEDIA_SPLITTING_PX = process.env.MEDIA_SPLITTING_PX ? Number(process.env.MEDIA_SPLITTING_PX) : 800
 
-function checkIfMobile(boundary = 800) {
+function checkIfMobile(boundary = MEDIA_SPLITTING_PX) {
     const isMobile = window.innerWidth <= boundary || /mobile|ios|android/gi.test(navigator.userAgent)
 
     // chrome
@@ -17,9 +17,11 @@ function checkIfMobile(boundary = 800) {
     return isMobile
 }
 
+let parsed = false
+
 const px2vw = px => {
     return Number(px)
-        ? checkIfMobile()
+        ? parsed
             ? `${Math.round((Number(px) / (DESIGN_DRAFT_WIDTH / 100)) * 100000) / 100000}vw`
             : `${px}px`
         : 0
@@ -50,11 +52,19 @@ const convertKeyframesPx2vw = keyframes => {
 
 const convertInterpolationPx2vw = interpolation => {
     if (typeof interpolation === 'string') {
-        if (/@mobile/g.test(interpolation)) {
-            return interpolation.replace(/@mobile/g, `@media (max-width: ${MEDIA_SPLITTING_PX}px)`)
+        if (/@mobile_start/.test(interpolation)) {
+            parsed = true
+            return interpolation.replace(/@mobile_start/, `@media (max-width: ${MEDIA_SPLITTING_PX}px)`)
         }
-        if (/@desktop/g.test(interpolation)) {
-            return interpolation.replace(/@desktop/g, `@media (min-width: ${MEDIA_SPLITTING_PX + 1}px)`)
+        if (/@mobile_end/.test(interpolation)) {
+            parsed = false
+            return interpolation.replace(/@mobile_end/, '')
+        }
+        if (/@desktop_start/.test(interpolation)) {
+            return interpolation.replace(/@desktop_start/, `@media (min-width: ${MEDIA_SPLITTING_PX + 1}px)`)
+        }
+        if (/@desktop_end/.test(interpolation)) {
+            return interpolation.replace(/@desktop_end/, '')
         }
         return convertStringPx2vw(interpolation)
     }
